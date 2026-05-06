@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon-180x180.png', 'favicon.svg'],
       manifest: {
         name: 'Cariochiamo!',
         short_name: 'Cariochiamo!',
@@ -16,8 +16,13 @@ export default defineConfig({
         theme_color: '#121212',
         background_color: '#121212',
         display: 'standalone',
-        start_url: '.',
+        start_url: '/Cariochiamo/',
         icons: [
+          {
+            src: 'pwa-64x64.png',
+            sizes: '64x64',
+            type: 'image/png'
+          },
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',
@@ -29,10 +34,10 @@ export default defineConfig({
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'maskable-icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'maskable'
           }
         ]
       },
