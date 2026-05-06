@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useGameStore, ROUNDS_SEQUENCE } from '../store';
 
 export const GameScreen: React.FC = () => {
-  const { players, history, insertRoundScores, undoLastRound, resetGame } = useGameStore();
+  const { players, history, insertRoundScores, undoLastRound, resetGame, rematch } = useGameStore();
   const currentRoundIndex = history.length;
   const isGameOver = currentRoundIndex >= ROUNDS_SEQUENCE.length;
 
   // Local state for the current round inputs
   const [currentScores, setCurrentScores] = useState<Record<string, string>>({});
+  const [showNewGamePopup, setShowNewGamePopup] = useState(false);
 
   // Calculate totals
   const totals = players.map(player => {
@@ -52,7 +53,15 @@ export const GameScreen: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-background text-textLight">
       {/* HEADER / LEADERBOARD (Pinned Top) */}
       <div className="sticky top-0 z-10 bg-surface shadow-2xl border-b border-gray-800 p-4">
-        <h2 className="text-xl font-bold text-center mb-4 text-primary">Classifica</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-primary">Classifica</h2>
+          <button 
+            onClick={() => setShowNewGamePopup(true)}
+            className="text-xs bg-gray-800 hover:bg-gray-700 text-white py-2 px-3 rounded-lg border border-gray-700 transition-colors min-h-[44px]"
+          >
+            Nuova Partita
+          </button>
+        </div>
         <div className="flex gap-4 overflow-x-auto pb-2 snap-x">
           {leaderboard.map((entry, idx) => (
             <div 
@@ -72,8 +81,9 @@ export const GameScreen: React.FC = () => {
           <>
             <div className="mb-6 mt-4 flex items-center justify-between bg-surface p-4 rounded-xl border border-gray-800">
               <div>
-                <p className="text-sm text-gray-400 uppercase tracking-widest font-semibold">Tound {currentRoundIndex + 1}</p>
+                <p className="text-sm text-gray-400 uppercase tracking-widest font-semibold">Round {currentRoundIndex + 1}</p>
                 <h3 className="text-2xl font-bold text-white mt-1">{ROUNDS_SEQUENCE[currentRoundIndex]}</h3>
+                <p className="text-sm text-primary mt-2 font-medium">Mischia: <span className="text-white">{players[currentRoundIndex % players.length]}</span></p>
               </div>
               {history.length > 0 && (
                 <button 
@@ -117,7 +127,7 @@ export const GameScreen: React.FC = () => {
             <p className="text-gray-400 mb-8 max-w-[250px]">Il vincitore assoluto di questa sessione è <span className="font-bold text-primary">{leaderboard[0].player}</span></p>
             
             <button 
-              onClick={resetGame}
+              onClick={() => setShowNewGamePopup(true)}
               className="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-red-600 transition-colors min-h-[44px]"
             >
               Nuova Partita
@@ -134,6 +144,41 @@ export const GameScreen: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* POPUP NUOVA PARTITA */}
+      {showNewGamePopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-surface p-6 rounded-2xl border border-gray-800 max-w-sm w-full shadow-2xl">
+            <h3 className="text-2xl font-bold text-white mb-6 text-center">Nuova Partita</h3>
+            <div className="flex flex-col gap-4">
+              <button 
+                onClick={() => {
+                  rematch();
+                  setShowNewGamePopup(false);
+                }}
+                className="w-full bg-primary text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-red-600 transition-colors min-h-[44px]"
+              >
+                Rivincita
+              </button>
+              <button 
+                onClick={() => {
+                  resetGame();
+                  setShowNewGamePopup(false);
+                }}
+                className="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-xl border border-gray-700 hover:bg-gray-700 transition-colors min-h-[44px]"
+              >
+                Inizia una nuova partita
+              </button>
+              <button 
+                onClick={() => setShowNewGamePopup(false)}
+                className="mt-2 text-gray-400 font-medium hover:text-white transition-colors py-2 min-h-[44px]"
+              >
+                Annulla
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

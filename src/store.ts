@@ -33,6 +33,7 @@ interface GameState {
   insertRoundScores: (scores: PlayerScoreEntry[]) => void;
   undoLastRound: () => void;
   resetGame: () => void;
+  rematch: () => void;
 }
 
 export const useGameStore = create<GameState>()(
@@ -63,6 +64,7 @@ export const useGameStore = create<GameState>()(
       },
 
       resetGame: () => set({ players: [], history: [] }),
+      rematch: () => set({ history: [] }),
     }),
     {
       name: 'cariochiamo-storage', // key in local storage
