@@ -5,10 +5,8 @@ import { SetupScreen } from './components/SetupScreen';
 import { GameScreen } from './components/GameScreen';
 
 function App() {
-  const { selectedGame, players } = useGameStore(state => ({
-    selectedGame: state.selectedGame,
-    players: state.players
-  }));
+  const selectedGame = useGameStore(state => state.selectedGame);
+  const players = useGameStore(state => state.players);
 
   return (
     <>

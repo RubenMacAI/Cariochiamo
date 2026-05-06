@@ -3,11 +3,9 @@ import { useGameStore } from '../store';
 
 export const SetupScreen: React.FC = () => {
   const [names, setNames] = useState<string[]>(['']);
-  const { setPlayers, selectedGame, backToMenu } = useGameStore(state => ({
-    setPlayers: state.setPlayers,
-    selectedGame: state.selectedGame,
-    backToMenu: state.backToMenu
-  }));
+  const setPlayers = useGameStore(state => state.setPlayers);
+  const selectedGame = useGameStore(state => state.selectedGame);
+  const backToMenu = useGameStore(state => state.backToMenu);
 
   const handleAddName = () => {
     if (names.length < 8) setNames([...names, '']);
