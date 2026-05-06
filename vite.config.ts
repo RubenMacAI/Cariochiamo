@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  base: './', // Permette il deploy in sottocartelle (es. GitHub Pages)
+  base: '/Cariochiamo/', // Permette il deploy in sottocartelle (es. GitHub Pages)
   plugins: [
     react(),
     VitePWA({
