@@ -24,31 +24,37 @@ export interface RoundLog {
   scores: PlayerScoreEntry[];
 }
 
+export type GameType = 'Carioca' | 'Burraco' | 'Scala 40' | 'Briscola';
+
 interface GameState {
+  selectedGame: GameType | null;
   players: string[];
   history: RoundLog[]; // history of round entries
   
   // Actions
+  setGame: (game: GameType) => void;
   setPlayers: (players: string[]) => void;
   insertRoundScores: (scores: PlayerScoreEntry[]) => void;
   undoLastRound: () => void;
   resetGame: () => void;
   rematch: () => void;
+  backToMenu: () => void;
 }
 
 export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
+      selectedGame: null,
       players: [],
       history: [],
 
+      setGame: (game) => set({ selectedGame: game }),
       setPlayers: (newPlayers) => set({ players: newPlayers.slice(0, 8) }),
       
       insertRoundScores: (scores) => {
-        const { history } = get();
-        // The new round index is just the length of current history
+        const { history, selectedGame } = get();
         const roundIndex = history.length;
-        if (roundIndex >= ROUNDS_SEQUENCE.length) return; // Game over
+        if (selectedGame === 'Carioca' && roundIndex >= ROUNDS_SEQUENCE.length) return;
 
         set({
           history: [...history, { roundIndex, scores }]
@@ -65,6 +71,7 @@ export const useGameStore = create<GameState>()(
 
       resetGame: () => set({ players: [], history: [] }),
       rematch: () => set({ history: [] }),
+      backToMenu: () => set({ selectedGame: null, players: [], history: [] }),
     }),
     {
       name: 'cariochiamo-storage', // key in local storage

@@ -3,7 +3,11 @@ import { useGameStore } from '../store';
 
 export const SetupScreen: React.FC = () => {
   const [names, setNames] = useState<string[]>(['']);
-  const setPlayers = useGameStore(state => state.setPlayers);
+  const { setPlayers, selectedGame, backToMenu } = useGameStore(state => ({
+    setPlayers: state.setPlayers,
+    selectedGame: state.selectedGame,
+    backToMenu: state.backToMenu
+  }));
 
   const handleAddName = () => {
     if (names.length < 8) setNames([...names, '']);
@@ -33,7 +37,15 @@ export const SetupScreen: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background text-textLight p-4">
       <div className="w-full max-w-md bg-surface p-6 rounded-2xl shadow-xl border border-gray-800">
-        <h1 className="text-3xl font-bold mb-6 text-center text-primary">Cariochiamo!</h1>
+        <div className="flex items-center mb-6">
+          <button 
+            onClick={backToMenu}
+            className="text-gray-400 hover:text-white p-2"
+          >
+            ←
+          </button>
+          <h1 className="flex-1 text-3xl font-bold text-center text-primary pr-8">{selectedGame}</h1>
+        </div>
         <p className="text-gray-400 mb-6 text-center text-sm">Aggiungi fino a 8 giocatori</p>
         
         <form onSubmit={handleStart} className="flex flex-col gap-4">

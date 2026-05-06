@@ -2,9 +2,13 @@ import { useState } from 'react';
 import { useGameStore, ROUNDS_SEQUENCE } from '../store';
 
 export const GameScreen: React.FC = () => {
-  const { players, history, insertRoundScores, undoLastRound, resetGame, rematch } = useGameStore();
+  const { players, history, insertRoundScores, undoLastRound, resetGame, rematch, selectedGame, backToMenu } = useGameStore();
   const currentRoundIndex = history.length;
-  const isGameOver = currentRoundIndex >= ROUNDS_SEQUENCE.length;
+  
+  // Per Carioca il gioco finisce automaticamente. Per gli altri, andrà avanti all'infinito finché non chiudono.
+  const isGameOver = selectedGame === 'Carioca' 
+    ? currentRoundIndex >= ROUNDS_SEQUENCE.length 
+    : false;
 
   // Local state for the current round inputs
   const [currentScores, setCurrentScores] = useState<Record<string, string>>({});
@@ -81,8 +85,12 @@ export const GameScreen: React.FC = () => {
           <>
             <div className="mb-6 mt-4 flex items-center justify-between bg-surface p-4 rounded-xl border border-gray-800">
               <div>
-                <p className="text-sm text-gray-400 uppercase tracking-widest font-semibold">Round {currentRoundIndex + 1}</p>
-                <h3 className="text-2xl font-bold text-white mt-1">{ROUNDS_SEQUENCE[currentRoundIndex]}</h3>
+                <p className="text-sm text-gray-400 uppercase tracking-widest font-semibold">
+                  Round {currentRoundIndex + 1}
+                </p>
+                <h3 className="text-2xl font-bold text-white mt-1">
+                  {selectedGame === 'Carioca' ? ROUNDS_SEQUENCE[currentRoundIndex] : `Mano ${currentRoundIndex + 1}`}
+                </h3>
                 <p className="text-sm text-primary mt-2 font-medium">Mischia: <span className="text-white">{players[currentRoundIndex % players.length]}</span></p>
               </div>
               {history.length > 0 && (
@@ -118,6 +126,16 @@ export const GameScreen: React.FC = () => {
               >
                 Salva Round
               </button>
+
+              {selectedGame !== 'Carioca' && history.length > 0 && (
+                <button 
+                  type="button"
+                  onClick={() => setShowNewGamePopup(true)}
+                  className="w-full mt-2 bg-background border border-gray-700 text-gray-300 font-bold text-lg py-4 rounded-xl hover:border-gray-500 transition-colors min-h-[44px]"
+                >
+                  Termina Partita
+                </button>
+              )}
             </form>
           </>
         ) : (
@@ -168,6 +186,15 @@ export const GameScreen: React.FC = () => {
                 className="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-xl border border-gray-700 hover:bg-gray-700 transition-colors min-h-[44px]"
               >
                 Inizia una nuova partita
+              </button>
+              <button 
+                onClick={() => {
+                  backToMenu();
+                  setShowNewGamePopup(false);
+                }}
+                className="w-full bg-background border border-gray-700 text-gray-300 font-bold text-lg py-4 rounded-xl hover:bg-surface transition-colors min-h-[44px]"
+              >
+                Torna al Menu Principale
               </button>
               <button 
                 onClick={() => setShowNewGamePopup(false)}
